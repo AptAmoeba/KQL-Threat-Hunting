@@ -1,5 +1,5 @@
 # Phishing Queries
-
+These queries are designed for hunting individual email vectors. Each query should serve its own purpose, and each should generally be designated as a Hunting or Alerting query. Hunting queries will return more noise, but help investigations. Alerting queries are tuned to alert on meaningful, more urgent events.
 
 &nbsp;
 
