@@ -54,7 +54,6 @@ let MaliciousDriverTable=externaldata(BYOVDTable:string)
 | extend ExtMD5 = substring(MDFileName, 0, strlen(MDFileName) -4);
 //
 DeviceImageLoadEvents
-| where Timestamp > ago(10d)
 | where FileName endswith ".sys"
 | join MaliciousDriverTable on $left.MD5 == $right.ExtMD5
 | extend ParentProcess = strcat(InitiatingProcessFileName, " (", InitiatingProcessVersionInfoProductName, ")")
