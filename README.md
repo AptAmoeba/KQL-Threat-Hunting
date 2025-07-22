@@ -9,8 +9,8 @@ Below are some sample queries. Full directory is above.
 ### > Mirror Masquerade Spoofing (Sender Address == Recipient Address)
 ```KQL
 // Created by BunchOfWetFrogs
+// (MITRE T1672) - Searches for SenderFrom (Header) + SenderMailFrom (Server) spoofing where SPF fails. 
 // Requirements: You must trust your own domain via SPF.
-// Searches for SenderFrom (Header) + SenderMailFrom (Server) spoofing where SPF fails. (MITRE T1672)
 let SpoofEmailScan = EmailEvents
 | where SenderFromAddress == RecipientEmailAddress and SenderMailFromAddress == RecipientEmailAddress
 | where parse_json(AuthenticationDetails)["SPF"] in~ ('fail', 'softfail')
@@ -41,11 +41,11 @@ Future Improvements:
 
 &nbsp;
 
-### > Vulnerable Driver Load Events
+### > (BYOVD) Vulnerable Driver Load Events
 
 ```KQL
 // Created by BunchOfWetFrogs
-// Scans for Vulnerable Driver/Theoretically Vulnerable Driver Load Events
+// (MITRE T1068) - Scans for Vulnerable Driver/Theoretically Vulnerable Driver Load Events
 // Output: Find 'Vulnerable Driver' attributes at https://www.loldrivers.io/ 
 let MaliciousDriverTable=externaldata(BYOVDTable:string)
 // The AV repo is updated faster than the MD5 repo, so we manually extract the MD5 & match it to any DevImgLoadEvents MD5.
