@@ -8,18 +8,8 @@ Currently, this alert sources entries from the LOLDrivers website hash repositor
 
 &nbsp;
 
-### > BYOVD-DriverLoad.kusto
-This query will alert when a known driver in the LOLDrivers list loads in your environment. This should only be successful loads, so this is a good query to alert on.
-
-&nbsp;
-
-**Planned updates:**
-- Pull Vulnerable Drivers from more sources.
-- Automatically extract Driver capabilities and list their attributes ("EDR-Killing", "Privilege Escalation", etc.).
-
----
-
-### > BYOVD-KnownDriverScan.kusto
+## Query Usage:
+### > BYOVD-KnownDriverScan.kusto - (Scanner for Detecting These Drivers in Your Environemnt)
 This query is more noisy because it will scan your environment for existing hashes which match known drivers in the LOLDrivers list. 
 
 This differs from the DriverLoad query because the Load Events alerts on successful driver loads, whereas this scans your environment across the designated time range searching for the existence of these hashes. 
@@ -28,3 +18,14 @@ This differs from the DriverLoad query because the Load Events alerts on success
 
 **Planned updates:**
 - Add a column for describing the action taken to cause the alert more clearly.
+
+---
+
+### > BYOVD-DriverLoad.kusto - (Alert for Successful Driver Load Events)
+This query will alert when a known driver in the LOLDrivers list loads in your environment. This should only be successful loads, so this is a good query to alert on.
+
+&nbsp;
+
+**Planned updates:**
+- Ingest more sources for released early-research/emerging Malicious Drivers.
+- Automatically extract Driver capabilities and list their attributes ("EDR-Killing", "Privilege Escalation", etc.).
