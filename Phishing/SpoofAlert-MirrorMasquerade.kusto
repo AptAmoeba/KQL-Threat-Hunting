@@ -1,0 +1,16 @@
+// Created by BunchOfWetFrogs
+// (MITRE T1672) - Searches for SenderFrom (Header) + SenderMailFrom (Server) spoofing where SPF fails.
+// I didn't see a name for this particular spoof setup, so I'm naming it Mirror Masquerade for fun :3
+// Requirements: You must trust your own domain via SPF.
+let SpoofEmailScan = EmailEvents
+| where SenderFromAddress == RecipientEmailAddress and SenderMailFromAddress == RecipientEmailAddress
+| where parse_json(AuthenticationDetails)["SPF"] in~ ('fail', 'softfail')
+| where DeliveryLocation has 'Inbox'
+| project Timestamp, RecipientEmailAddress, Subject, SenderFromAddress, AttachmentCount, SenderMailFromAddress, SenderIPv4, DeliveryLocation, AuthenticationDetails, InternetMessageId, NetworkMessageId;
+SpoofEmailScan
+| join kind=leftouter (
+    EmailAttachmentInfo
+    | project NetworkMessageId, FileName, SHA256
+    ) on NetworkMessageId
+| project Timestamp, ["Recipient"] = RecipientEmailAddress, Subject, ["Sender (Header - What User Sees)"] = SenderFromAddress, SenderIPv4, FileName, SHA256, ["Sender (MailFROM - What Server Sees)"] = SenderMailFromAddress, DeliveryLocation, AuthenticationDetails, InternetMessageId, NetworkMessageId
+| sort by Timestamp desc
