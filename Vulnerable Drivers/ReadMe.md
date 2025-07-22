@@ -1,6 +1,6 @@
 # Vulnerable Driver Queries
 
-Microsoft itself has a list of known-malicious Drivers (**Microsoft 'Vulnerable Driver Blocklist'**) which are automatically remediated on any load action when the security setting is enabled.
+Microsoft itself has a list of known-malicious Drivers (**"Microsoft Vulnerable Driver Blocklist"** in Defender) which are automatically remediated on any load action when the security setting is enabled.
 
 That said, the queries in this repo aim to fill in potential gaps by sourcing drivers from other sources (more sources to come soon!) in order to catch upcoming drivers that might not yet be in Microsoft's official list. 
 
