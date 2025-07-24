@@ -1,6 +1,7 @@
 ```kql
 // Created by BunchOfWetFrogs
-// (MITRE T1672) This script automatically detects From+MailFROM spoofing, extracts payloads, & checks if users executed them.
+// (MITRE T1672) This script automatically detects From+MailFROM spoofing.
+// This script also automatically extracts payloads & checks if users executed them.
 // 
 // Requirements: You must trust your own domain via SPF; Add any Email Security Servers you own to EmailServerWhitelist
 let EmailServerWhitelist = dynamic(['IPAddr1', 'IPAddr2', 'etc']);
