@@ -9,9 +9,11 @@ Below are some sample queries. Full directory is above.
 ### > Locate Mirror Masquerade Spoofing & Detect Payload Execution Status per Victim
 ```KQL
 // Created by BunchOfWetFrogs
-// (MITRE T1672) This script automatically detects From+MailFROM spoofing, extracts payloads, & checks if users executed them.
+// (MITRE T1672) This script does the following:
+// - Identifies From+MailFROM spoofing, extracts payloads if present
+// - Automatically detects whether the payload was executed by the user.
 // 
-// Requirements: You must trust your own domain via SPF; Add any Email Security Servers you own to EmailServerWhitelist
+// Requirements: You must trust your own domain via SPF; Adjut EmailServerWhitelist if necessary.
 let EmailServerWhitelist = dynamic(['IPAddr1', 'IPAddr2', 'etc']);
 // ^Place your Email Security Provider IPs here!
 //
