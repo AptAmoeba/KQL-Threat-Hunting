@@ -14,8 +14,8 @@ Below are some sample queries. Full directory is above.
 // - Automatically detects whether the payload was executed by the user.
 // 
 // Requirements: You must trust your own domain via SPF; Adjut EmailServerWhitelist if necessary.
-let EmailServerWhitelist = dynamic(['IPAddr1', 'IPAddr2', 'etc']);
-// ^Place your Email Security Provider IPs here!
+let EmailServerWhitelist = dynamic(['IPAddr1', 'IPAddr2', 'etc']); //These demo entries are fine to leave as-is! They won't break the query!
+// ^Place your Email Security Provider IPs here if needed!
 //
 let SpoofEmailScan = EmailEvents
 | where SenderFromAddress == RecipientEmailAddress and SenderMailFromAddress == RecipientEmailAddress
