@@ -1,3 +1,4 @@
+```kql
 // Created by BunchOfWetFrogs
 // (MITRE T1068) - Scans for Vulnerable Driver/Theoretically Vulnerable Driver Load Events
 // Output: Find 'Vulnerable Driver' attributes at https://www.loldrivers.io/ 
@@ -13,3 +14,4 @@ DeviceImageLoadEvents
 | extend ParentProcess = strcat(InitiatingProcessFileName, " (", InitiatingProcessVersionInfoProductName, ")")
 | project Timestamp, DeviceName, User=InitiatingProcessAccountName, ["Vulnerable Driver"]=FileName, Location=FolderPath, ["Parent Process"]=ParentProcess, ProcessCLI=InitiatingProcessCommandLine, SHA256, MD5, DeviceId, ReportId 
 | sort by Timestamp desc
+```
