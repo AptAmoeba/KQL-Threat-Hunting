@@ -9,7 +9,7 @@ Currently, this alert sources entries from the LOLDrivers website hash repositor
 &nbsp;
 
 ## Query Usage:
-### > BYOVD-KnownDriverScan.kusto - (Scanner for Detecting These Drivers in Your Environemnt)
+### > BYOVD - Known Driver Scan (Report) - (Scanner for Detecting These Drivers in Your Environemnt)
 This query is more noisy because it will scan your environment for existing hashes which match known drivers in the LOLDrivers list. 
 
 This differs from the DriverLoad query because the Load Events alerts on successful driver loads, whereas this scans your environment across the designated time range searching for the existence of these hashes. 
@@ -21,7 +21,7 @@ This differs from the DriverLoad query because the Load Events alerts on success
 
 ---
 
-### > BYOVD-DriverLoad.kusto - (Alert for Successful Driver Load Events)
+### > BYOVD - DriverLoad (Alert) - (Alert for Successful Driver Load Events)
 This query will alert when a known driver in the LOLDrivers list loads in your environment. This should only be successful loads, so this is a good query to alert on.
 
 &nbsp;
