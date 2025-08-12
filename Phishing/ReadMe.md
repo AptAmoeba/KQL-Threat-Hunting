@@ -5,7 +5,7 @@ These queries are designed for hunting individual email vectors. Each query shou
 
 ## Query Usage:
 
-### > SpoofAlert-MirrorMasquerade
+### > Mirror Masquerade Spoofing (Alert)
 
 This query alerts on spoofing where both the header & server FROM addresses equal the recipient address 
 
