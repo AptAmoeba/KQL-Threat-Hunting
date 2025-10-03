@@ -6,9 +6,9 @@ Below are some sample queries. Full directory is above.
 &nbsp;
 
 ## Sample List:
-### > Locate Mirror Masquerade Spoofing & Detect Payload Execution Status per Victim
+### > Locate 'Direct Send' Spoofing & Detect Payload Execution Status per Victim
 ```KQL
-// Created by BunchOfWetFrogs
+// Created by AptAmoeba/BunchOfWetFrogs
 // (MITRE T1672) This script does the following:
 // - Identifies From+MailFROM spoofing, extracts payloads if present
 // - Automatically detects whether the payload was executed by the user.
