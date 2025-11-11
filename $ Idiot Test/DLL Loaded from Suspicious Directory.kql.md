@@ -1,6 +1,7 @@
 ```kql
 // Created by BunchOfWetFrogs
 // DLLs launched from common user directories
+// This one will potentially need some False Positive tuning.
 DeviceImageLoadEvents
 | where ActionType == "ImageLoaded"
 | where InitiatingProcessAccountName != "system"
