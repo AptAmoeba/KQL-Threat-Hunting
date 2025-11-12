@@ -1,5 +1,5 @@
 # Idiot Test
-These queries were made as "Default Unmodified Payload/Tool" detections. They are made to test for poor OPSEC from attackers.
+These queries were made to catch poor OPSEC or default/unmodified tooling from attackers.
 
 &nbsp;
 
