@@ -1,6 +1,6 @@
 ```kql
 // Created by AptAmoeba/BunchOfWetFrogs
-// (Phish/Disallowed Tenant Collaboration Hunting) Teams B2B Guest Invite Parser + Tenant Name Resolution 
+// B2B Teams Invite to User from External Tenant (Potential Phishing/Disallowed Tenant Collaboration Hunting) 
 // This will catch all External Teams Invites, which will include phishing messages. Check the "Supposed 'Teams Group Name'" section to evaluate. 
 //
 let ConnectionChecker = EntraIdSignInEvents //Checking if Recipients have connected to the External Tenant Before
