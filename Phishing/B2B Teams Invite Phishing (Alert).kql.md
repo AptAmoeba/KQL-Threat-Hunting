@@ -41,3 +41,16 @@ Query Output:
 - "Tenant Information" provides a URL that will resolve more information about that tenant (Name, Approx. location, Connection status, etc.)
 - "User Connected to Tenant?" is a Boolean that will parse your EntraIdSignInEvents to identify whether the user has clicked the link or previously joined the remote (attacker-controlled) Tenant as a Guest.
 - "Supposed 'Teams Group Name'" is technically the name of the Teams Group, but phishing often adds the phish message to this section. Manually evaluate whether this looks like phishing.
+
+## Checking Historic Connections to a Tenant Once a Remote TenantID + User is Known
+
+```kql
+EntraIdSignInEvents
+| where ResourceTenantId == "<TenantID>"// <-- ID from prev. query
+| where Application contains "Teams"// Remove this to see all Tenant Application connections
+| extend User = tolower(extract(@"^([^@]+)@", 1, tostring(AccountUpn)))
+| where IsGuestUser == 1 // This catches when our users are guests in external tenants
+| where User == "<user>"// <-- User from prev. query
+| order by Timestamp desc
+//| summarize SignInCount = count() by ResourceTenantId, User; //Uncomment to get a count of Signins from the User to the Tenant 
+```
