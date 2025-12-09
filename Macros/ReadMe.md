@@ -18,3 +18,6 @@ This query will watch for any Scheduled Task creation event originating from an 
 This query aggregates the related events and then deduplicates them, leaving only unique combinations so you can see individual events cleanly without noise.
 
 &nbsp;
+
+## Times these alerts have caught professional Red Teamers:
+1
