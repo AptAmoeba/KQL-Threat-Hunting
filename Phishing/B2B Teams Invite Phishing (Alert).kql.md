@@ -82,11 +82,12 @@ EntraIdSignInEvents
 //| where AccountUpn contains "<user>"
 | where IsGuestUser == 1
 | distinct ResourceTenantId, AccountUpn//, Application
-//Generate a URL to resolve the Remote Tenant's Name:
+//Generate a URL to resolve the Remote Tenant's Name
 | extend TenantResolution = iff(isempty(ResourceTenantId), "", strcat("https://tenantidlookup.com/", tostring(ResourceTenantId)))
 | summarize SignInCount = count() by ResourceTenantId, TenantResolution//, Application
-//| where SignInCount > 1 //Uncomment to ignore all single-connection events.
+//| where SignInCount > 20 //Uncomment to only check Remote Tenants with more than 5 Unique user sign-ins.
 | sort by SignInCount desc
+| project ["Unique User Sign-Ins"]=SignInCount, ResourceTenantId, TenantResolution//, Application
 ```
 
 I suggest adding the most common ones to the whitelist, and then enforcing the Block List. Anyone who then needs to regain access to legitimate Tenants can submit a ticket for review.
