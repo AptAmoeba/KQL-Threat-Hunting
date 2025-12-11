@@ -45,6 +45,7 @@ Query Output:
 ## Checking Historic Connections to a Tenant Once a Remote TenantID + User is Known
 
 ```kql
+//Historic Successful Tenant Connection Lookup
 EntraIdSignInEvents
 | where ResourceTenantId == "<TenantID>"// <-- ID from prev. query
 | where Application contains "Teams"// Remove this to see all Tenant Application connections
@@ -54,3 +55,37 @@ EntraIdSignInEvents
 | order by Timestamp desc
 //| summarize SignInCount = count() by ResourceTenantId, User; //Uncomment to get a count of Signins from the User to the Tenant 
 ```
+
+&nbsp;
+
+## >WARNING
+
+[!] Remote Tenants can still add your users as Guests without sending Teams invites. If your user does not connect to them, there will not be record of their connection in the Historic Connections section either, nor will there be an alert for the Teams phishing vector.
+
+However, from your User's perspective, they will get a banner within Teams telling them that a new Tenant has added them. They will have to manually Leave the Tenant ("Go To Settings" > Leave):
+
+<img width="1903" height="86" alt="Example-B2B-User-Added-as-Guest-Banner" src="https://github.com/user-attachments/assets/c106424e-4bb7-4833-b5cf-74ec20fc3078" />
+
+
+To tighten restrictions on these, I suggest completely blocking B2B invites. You can manually whitelist them afterwards, as the whitelist takes precedence above the baseline block ([External Tenant Access Auditing - MS](https://techcommunity.microsoft.com/discussions/microsoft-entra/audit-users-to-view-who-are-guests-in-other-tenants/4390435))
+
+&nbsp;
+
+To get a preliminary whitelist for the most common legitimate B2B connections, you may use this query that I wrote:
+
+```kql
+// Pull all active Tenant connections and sort by prevalence. Add custom URL to resolve Remote Tenant's Name.
+EntraIdSignInEvents 
+| where Timestamp >ago(90d)
+| where ResourceTenantId != "<Your Tenant ID>"
+//| where AccountUpn contains "<user>"
+| where IsGuestUser == 1
+| distinct ResourceTenantId, AccountUpn
+//Generate a URL to resolve the Remote Tenant's Name:
+| extend TenantResolution = iff(isempty(ResourceTenantId), "", strcat("https://tenantidlookup.com/", tostring(ResourceTenantId)))
+| summarize SignInCount = count() by ResourceTenantId, TenantResolution
+//| where SignInCount > 1 //Uncomment to ignore all single-connection events.
+| sort by SignInCount desc
+```
+
+I suggest adding the most common ones to the whitelist, and then enforcing the Block List. Anyone who then needs to regain access to legitimate Tenants can submit a ticket for review.
