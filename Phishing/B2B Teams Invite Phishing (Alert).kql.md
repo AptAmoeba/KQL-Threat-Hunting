@@ -74,16 +74,17 @@ To tighten restrictions on these, I suggest completely blocking B2B invites. You
 To get a preliminary whitelist for the most common legitimate B2B connections, you may use this query that I wrote:
 
 ```kql
-// Pull all active Tenant connections and sort by prevalence. Add custom URL to resolve Remote Tenant's Name.
+// Pull all active Tenant connections and sort by prevalence, with the ability to add Application context.
+// Additionally added a custom URL to resolve Remote Tenant's Name.
 EntraIdSignInEvents 
 | where Timestamp >ago(90d)
 | where ResourceTenantId != "<Your Tenant ID>"
 //| where AccountUpn contains "<user>"
 | where IsGuestUser == 1
-| distinct ResourceTenantId, AccountUpn
+| distinct ResourceTenantId, AccountUpn//, Application
 //Generate a URL to resolve the Remote Tenant's Name:
 | extend TenantResolution = iff(isempty(ResourceTenantId), "", strcat("https://tenantidlookup.com/", tostring(ResourceTenantId)))
-| summarize SignInCount = count() by ResourceTenantId, TenantResolution
+| summarize SignInCount = count() by ResourceTenantId, TenantResolution//, Application
 //| where SignInCount > 1 //Uncomment to ignore all single-connection events.
 | sort by SignInCount desc
 ```
