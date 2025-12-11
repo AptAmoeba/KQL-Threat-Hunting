@@ -75,19 +75,21 @@ To get a preliminary whitelist for the most common legitimate B2B connections, y
 
 ```kql
 // Pull all active Tenant connections and sort by prevalence, with the ability to add Application context.
-// Additionally added a custom URL to resolve Remote Tenant's Name.
+// Additionally added a custom URL to resolve Remote Tenant's Name, and a URL to check Application IDs.
+// Uncomment the "//, Application, ApplicationId" to view what Applications & IDs were utilized.
 EntraIdSignInEvents 
 | where Timestamp >ago(90d)
 | where ResourceTenantId != "<Your Tenant ID>"
 //| where AccountUpn contains "<user>"
 | where IsGuestUser == 1
-| distinct ResourceTenantId, AccountUpn//, Application
+| distinct ResourceTenantId, AccountUpn//, Application, ApplicationId
 //Generate a URL to resolve the Remote Tenant's Name
 | extend TenantResolution = iff(isempty(ResourceTenantId), "", strcat("https://tenantidlookup.com/", tostring(ResourceTenantId)))
-| summarize SignInCount = count() by ResourceTenantId, TenantResolution//, Application
-//| where SignInCount > 20 //Uncomment to only check Remote Tenants with more than 5 Unique user sign-ins.
+| summarize SignInCount = count() by ResourceTenantId, TenantResolution//, Application, ApplicationId
+//| where SignInCount > 5 //Uncomment to only show Remote Tenant connections that have > 5 user sign-ins.
 | sort by SignInCount desc
-| project ["Unique User Sign-Ins"]=SignInCount, ResourceTenantId, TenantResolution//, Application
+| project ["Unique User Sign-Ins"]=SignInCount, ResourceTenantId, TenantResolution//, Application, ApplicationId
+// Investigate AppIDs: https://byteintocyber.com/microsoft-365-application-ids-bec-investigation-resources/
 ```
 
 I suggest adding the most common ones to the whitelist, and then enforcing the Block List. Anyone who then needs to regain access to legitimate Tenants can submit a ticket for review.
