@@ -13,7 +13,7 @@ Below are some sample queries. Full directory is above.
 // - Identifies From+MailFROM spoofing, extracts payloads if present
 // - Automatically detects whether the payload was executed by the user.
 // 
-// Requirements: You must trust your own domain via SPF; Adjut EmailServerWhitelist if necessary.
+// Requirements: You must trust your own domain via SPF; Adjust EmailServerWhitelist if necessary.
 let EmailServerWhitelist = dynamic(['IPAddr1', 'IPAddr2', 'etc']); //These demo entries are fine to leave as-is! They won't break the query!
 // ^Place your Email Security Provider IPs here if needed!
 //
