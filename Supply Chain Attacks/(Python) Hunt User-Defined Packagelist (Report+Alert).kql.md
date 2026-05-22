@@ -17,3 +17,9 @@ DeviceFileEvents
 | summarize FirstSeen=min(Timestamp) by DeviceName, RequestAccountName, LibraryFolder, InitiatingProcessCommandLine, InitiatingProcessParentFileName
 | project FirstSeen, DeviceName, User=RequestAccountName, Library=LibraryFolder, CLI=InitiatingProcessCommandLine, ["Initiated By"]=InitiatingProcessParentFileName
 ```
+
+&nbsp;
+
+## Sample Output
+Sample catch searching for the "HashDB-cli" lib.
+<img width="1237" height="317" alt="image" src="https://github.com/user-attachments/assets/b023dcc1-c469-4f90-9282-b1c03b61eee2" />
