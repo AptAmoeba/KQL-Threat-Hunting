@@ -8,6 +8,7 @@ Because Python does not list version numbers in their directories, this script w
 ## Query 
 ```kql
 // Created by AptAmoeba/BunchOfWetFrogs
+// Linux support added by bugsandjohn/bugz
 // Python Supply Chain Hunting (case-insensitive IoC PackageName hunting, live-updatable via remote repo)
 //
 let UserInstallLibPath = @"C:\\Users\\[^\\]+\\AppData\\Local\\Packages\\[^\\]+\\LocalCache\\local-packages\\Python[^\\]+\\site-packages\\[^\\]+";
