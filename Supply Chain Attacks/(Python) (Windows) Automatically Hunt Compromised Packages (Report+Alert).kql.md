@@ -1,4 +1,4 @@
-## How This Query Works
+## How This Query Works (Automatic Detection of Confirmed-Compromised Packages) 
 This query implements our first automatic scraper for self-updating tables! Unrooted built a scraper that will pull updates for compromised package lists and compile them into a normalized csv file hosted on this github (/scrapers-output/packages.csv). This query fetches that csv, parses it, then compares the known-compromised packages in a case-insensitive search of your environment's Python library directories.
 
 The ```CompromisedLibs``` remote list can be ANY remote list you desire; it doesn't have to be ours! For retrofitting this query for future breaches/lists, pull the raw data list URL and then import the data however you see fit. The other logic will stay the same. 
