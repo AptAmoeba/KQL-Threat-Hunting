@@ -1,0 +1,75 @@
+name: Refresh Socket.dev compromised packages (attack 22)
+
+on:
+  schedule:
+    # Daily at 06:17 UTC. GitHub delays scheduled runs at top-of-hour, so the
+    # odd minute reduces queue time. Cron is UTC.
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit refreshed output/packages.csv
+  actions:  write   # self-disable via `gh workflow disable` when campaign goes quiet
+
+env:
+  IDLE_THRESHOLD_DAYS: 30
+
+concurrency:
+  group: scrape-shai-hulud
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install scraper deps
+        run: pip install --upgrade pip curl_cffi
+
+      - name: Scrape Socket.dev (attack 22 → output/packages.csv)
+        run: python Feed-Scrapers/socket_scraper.py --attack-id 22 --out scrapers-output/packages.csv
+
+      - name: Compute campaign freshness
+        id: freshness
+        run: |
+          set -euo pipefail
+          # Column 4 of output/packages.csv is detected_at (ISO 8601 UTC).
+          latest=$(tail -n +2 scrapers-output/packages.csv | cut -d, -f4 | sort -r | head -n1)
+          if [[ -z "$latest" ]]; then
+            echo "::error::scrapers-output/packages.csv has no data rows."
+            exit 1
+          fi
+          idle_days=$(( ( $(date -u +%s) - $(date -u -d "$latest" +%s) ) / 86400 ))
+          echo "latest_detection=$latest"  >> "$GITHUB_OUTPUT"
+          echo "idle_days=$idle_days"      >> "$GITHUB_OUTPUT"
+          {
+            echo "### Campaign freshness (attack 22)"
+            echo "- Latest detection : \`$latest\`"
+            echo "- Idle days        : **$idle_days** (threshold: $IDLE_THRESHOLD_DAYS)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit & push if the file changed
+        run: |
+          set -euo pipefail
+          if [[ -z "$(git status --porcelain scrapers-output/packages.csv)" ]]; then
+            echo "No changes to scrapers-output/packages.csv — skipping commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add scrapers-output/packages.csv
+          git commit -m "data: refresh compromised packages ($(date -u +%Y-%m-%dT%H:%MZ); idle=${{ steps.freshness.outputs.idle_days }}d)"
+          git push
+
+      - name: Go dormant if campaign idle ≥ threshold
+        if: ${{ fromJSON(steps.freshness.outputs.idle_days) >= fromJSON(env.IDLE_THRESHOLD_DAYS) }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "::warning::Attack 22 idle ${{ steps.freshness.outputs.idle_days }}d (≥ $IDLE_THRESHOLD_DAYS). Disabling daily schedule. Re-enable from Actions UI or: gh workflow enable scrape-shai-hulud.yml"
+          gh workflow disable scrape-shai-hulud.yml
