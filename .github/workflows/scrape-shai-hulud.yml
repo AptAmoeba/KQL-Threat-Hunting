@@ -37,21 +37,24 @@ jobs:
       - name: Compute campaign freshness
         id: freshness
         run: |
-          set -euo pipefail
-          # Column 4 of output/packages.csv is detected_at (ISO 8601 UTC).
-          latest=$(tail -n +2 scrapers-output/packages.csv | cut -d, -f4 | sort -r | head -n1)
-          if [[ -z "$latest" ]]; then
-            echo "::error::scrapers-output/packages.csv has no data rows."
-            exit 1
-          fi
-          idle_days=$(( ( $(date -u +%s) - $(date -u -d "$latest" +%s) ) / 86400 ))
-          echo "latest_detection=$latest"  >> "$GITHUB_OUTPUT"
-          echo "idle_days=$idle_days"      >> "$GITHUB_OUTPUT"
-          {
-            echo "### Campaign freshness (attack 22)"
-            echo "- Latest detection : \`$latest\`"
-            echo "- Idle days        : **$idle_days** (threshold: $IDLE_THRESHOLD_DAYS)"
-          } >> "$GITHUB_STEP_SUMMARY"
+            set -euo pipefail
+            # Column 4 of scrapers-output/packages.csv is detected_at (ISO 8601 UTC).
+            # ISO 8601 sorts lexicographically = chronologically, so awk's max works directly.
+            latest=$(awk -F, 'NR>1 && $4>m {m=$4} END {print m}' scrapers-output/packages.csv)
+            if [[ -z "$latest" ]]; then
+              echo "::error::scrapers-output/packages.csv has no data rows."
+              exit 1
+            fi
+            # Strip fractional seconds before handing to GNU date — it's pickier than you'd think.
+            ts=${latest%.*}; [[ "$ts" == "$latest" ]] || ts="${ts}Z"
+            idle_days=$(( ( $(date -u +%s) - $(date -u -d "$ts" +%s) ) / 86400 ))
+            echo "latest_detection=$latest"  >> "$GITHUB_OUTPUT"
+            echo "idle_days=$idle_days"      >> "$GITHUB_OUTPUT"
+            {
+              echo "### Campaign freshness (attack 22)"
+              echo "- Latest detection : \`$latest\`"
+              echo "- Idle days        : **$idle_days** (threshold: $IDLE_THRESHOLD_DAYS)"
+            } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit & push if the file changed
         run: |
