@@ -9,7 +9,6 @@ let MaliciousDriverTable=externaldata(BYOVDTable:string)
 | extend ExtMD5 = substring(MDFileName, 0, strlen(MDFileName) -4);
 //
 DeviceImageLoadEvents
-| where FileName endswith ".sys"
 | join MaliciousDriverTable on $left.MD5 == $right.ExtMD5
 | extend ParentProcess = strcat(InitiatingProcessFileName, " (", InitiatingProcessVersionInfoProductName, ")")
 | project Timestamp, DeviceName, User=InitiatingProcessAccountName, ["Vulnerable Driver"]=FileName, Location=FolderPath, ["Parent Process"]=ParentProcess, ProcessCLI=InitiatingProcessCommandLine, SHA256, MD5, DeviceId, ReportId 
